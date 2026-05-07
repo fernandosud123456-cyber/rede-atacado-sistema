@@ -58,16 +58,24 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 // ROTAS
 // ==========================================
 
-app.get('/health', (_req, res) => {  // ← _req (não usado)
+app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.use("/admin", adminRoutes);
-app.use("/contato", contatoRoutes);
-app.use("/encartes", encarteRoutes);
-app.use("/categorias", categoriaRoutes); 
-app.use("/empresa", empresaRoutes);
-app.use("/sorteios", sorteioRoutes);
+app.get('/', (_req, res) => {
+    res.json({ 
+        api: 'Certo Atacado API',
+        version: '1.0.0',
+        status: 'running'
+    });
+});
+
+app.use("/api", adminRoutes);
+app.use("/api", contatoRoutes);
+app.use("/api", encarteRoutes);
+app.use("/api", categoriaRoutes); 
+app.use("/api", empresaRoutes);
+app.use("/api", sorteioRoutes);
 
 // ==========================================
 // TRATAMENTO DE ERROS GLOBAL

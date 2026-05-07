@@ -54,12 +54,19 @@ app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "../
 app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
-app.use("/admin", adminRoutes_1.default);
-app.use("/contato", contatoRoutes_1.default);
-app.use("/encartes", encarteRoutes_1.default);
-app.use("/categorias", categoriaRoutes_1.default);
-app.use("/empresa", empresaRoutes_1.default);
-app.use("/sorteios", sorteioRoutes_1.default);
+app.get('/', (_req, res) => {
+    res.json({
+        api: 'Certo Atacado API',
+        version: '1.0.0',
+        status: 'running'
+    });
+});
+app.use("/api", adminRoutes_1.default);
+app.use("/api", contatoRoutes_1.default);
+app.use("/api", encarteRoutes_1.default);
+app.use("/api", categoriaRoutes_1.default);
+app.use("/api", empresaRoutes_1.default);
+app.use("/api", sorteioRoutes_1.default);
 // ==========================================
 // TRATAMENTO DE ERROS GLOBAL
 // ==========================================
