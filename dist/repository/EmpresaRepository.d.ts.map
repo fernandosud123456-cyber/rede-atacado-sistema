@@ -1,0 +1,1 @@
+{"version":3,"file":"EmpresaRepository.d.ts","sourceRoot":"","sources":["../../src/repository/EmpresaRepository.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,OAAO,EAAE,kBAAkB,EAAE,MAAM,sBAAsB,CAAC;AAEnE,qBAAa,iBAAiB;IAGpB,WAAW,IAAI,OAAO,CAAC,kBAAkB,GAAG,IAAI,CAAC;IAgCjD,SAAS,CAAC,EAAE,EAAE,MAAM,EAAE,KAAK,EAAE,OAAO,CAAC,OAAO,CAAC,GAAG,OAAO,CAAC,kBAAkB,GAAG,IAAI,CAAC;CAkD3F"}

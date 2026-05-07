@@ -1,0 +1,167 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SorteioRepository = void 0;
+const supabase_js_1 = require("@supabase/supabase-js");
+let supabase;
+function getSupabase() {
+    if (!supabase) {
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_ANON_KEY;
+        if (!supabaseUrl || !supabaseKey) {
+            throw new Error('⚠️ Variáveis SUPABASE_URL e SUPABASE_ANON_KEY não configuradas!');
+        }
+        supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
+    }
+    return supabase;
+}
+class SorteioRepository {
+    async listarAtivos() {
+        const hoje = new Date().toISOString().split('T')[0];
+        const { data, error } = await getSupabase()
+            .from('sorteios')
+            .select('*')
+            .eq('ativo', true)
+            .gte('data_fim', hoje)
+            .order('data_inicio', { ascending: false });
+        if (error)
+            throw new Error(error.message);
+        return (data || []);
+    }
+    async listarTodos() {
+        const { data, error } = await getSupabase()
+            .from('sorteios')
+            .select('*')
+            .order('data_inicio', { ascending: false });
+        if (error)
+            throw new Error(error.message);
+        return (data || []);
+    }
+    async buscarPorId(id) {
+        const { data, error } = await getSupabase()
+            .from('sorteios')
+            .select('*')
+            .eq('id', id)
+            .single();
+        if (error)
+            return null;
+        return data;
+    }
+    async criar(sorteio) {
+        const { data, error } = await getSupabase()
+            .from('sorteios')
+            .insert({
+            titulo: sorteio.titulo,
+            descricao: sorteio.descricao || null,
+            imagem_url: sorteio.imagem_url,
+            data_inicio: sorteio.data_inicio,
+            data_fim: sorteio.data_fim,
+            ativo: sorteio.ativo ?? true
+        })
+            .select()
+            .single();
+        if (error)
+            throw new Error(error.message);
+        return data;
+    }
+    async atualizar(id, sorteio) {
+        const updateData = { atualizado_em: new Date().toISOString() };
+        if (sorteio.titulo !== undefined)
+            updateData.titulo = sorteio.titulo;
+        if (sorteio.descricao !== undefined)
+            updateData.descricao = sorteio.descricao;
+        if (sorteio.imagem_url !== undefined)
+            updateData.imagem_url = sorteio.imagem_url;
+        if (sorteio.data_inicio !== undefined)
+            updateData.data_inicio = sorteio.data_inicio;
+        if (sorteio.data_fim !== undefined)
+            updateData.data_fim = sorteio.data_fim;
+        if (sorteio.ativo !== undefined)
+            updateData.ativo = sorteio.ativo;
+        const { data, error } = await getSupabase()
+            .from('sorteios')
+            .update(updateData)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error)
+            throw new Error(error.message);
+        return data;
+    }
+    async excluir(id) {
+        // Excluir participantes primeiro
+        await getSupabase()
+            .from('participantes_sorteio')
+            .delete()
+            .eq('sorteio_id', id);
+        const { error } = await getSupabase()
+            .from('sorteios')
+            .delete()
+            .eq('id', id);
+        if (error)
+            throw new Error(error.message);
+        return true;
+    }
+    // ==========================================
+    // PARTICIPANTES
+    // ==========================================
+    async adicionarParticipante(sorteioId, nome, telefone) {
+        const { data, error } = await getSupabase()
+            .from('participantes_sorteio')
+            .insert({
+            sorteio_id: sorteioId,
+            nome: nome,
+            telefone: telefone
+        })
+            .select()
+            .single();
+        if (error)
+            throw new Error(error.message);
+        return data;
+    }
+    async listarParticipantes(sorteioId) {
+        const { data, error } = await getSupabase()
+            .from('participantes_sorteio')
+            .select('*')
+            .eq('sorteio_id', sorteioId)
+            .order('criou_em', { ascending: true });
+        if (error)
+            throw new Error(error.message);
+        return data || [];
+    }
+    async contarParticipantes(sorteioId) {
+        const { count, error } = await getSupabase()
+            .from('participantes_sorteio')
+            .select('*', { count: 'exact', head: true })
+            .eq('sorteio_id', sorteioId);
+        if (error)
+            throw new Error(error.message);
+        return count || 0;
+    }
+    async buscarParticipanteAleatorio(sorteioId) {
+        const { data, error } = await getSupabase()
+            .from('participantes_sorteio')
+            .select('*')
+            .eq('sorteio_id', sorteioId);
+        if (error || !data || data.length === 0)
+            return null;
+        // Random em memória (Supabase não tem RANDOM())
+        const randomIndex = Math.floor(Math.random() * data.length);
+        return data[randomIndex];
+    }
+    async verificarParticipacao(sorteioId, nome, telefone) {
+        let query = getSupabase()
+            .from('participantes_sorteio')
+            .select('id')
+            .eq('sorteio_id', sorteioId)
+            .ilike('nome', nome);
+        if (telefone) {
+            query = query.eq('telefone', telefone);
+        }
+        const { data, error } = await query;
+        if (error)
+            return false;
+        return data && data.length > 0;
+    }
+}
+exports.SorteioRepository = SorteioRepository;
+//# sourceMappingURL=SorteioRepository.js.map

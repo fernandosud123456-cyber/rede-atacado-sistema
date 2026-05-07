@@ -23,23 +23,23 @@ export class SorteioRepository {
         const hoje = new Date().toISOString().split('T')[0];
         const { data, error } = await getSupabase()
             .from('sorteios')
-            .select('id, titulo, descricao, imagem_url, data_inicio, data_fim, ativo')
+            .select('*')
             .eq('ativo', true)
             .gte('data_fim', hoje)
             .order('data_inicio', { ascending: false });
         
         if (error) throw new Error(error.message);
-        return data || [];
+        return (data || []) as SorteioResponseDTO[];
     }
 
     async listarTodos(): Promise<Sorteio[]> {
         const { data, error } = await getSupabase()
             .from('sorteios')
-            .select('id, titulo, descricao, imagem_url, data_inicio, data_fim, ativo')
+            .select('*')
             .order('data_inicio', { ascending: false });
         
         if (error) throw new Error(error.message);
-        return data || [];
+        return (data || []) as Sorteio[];
     }
 
     async buscarPorId(id: number): Promise<SorteioResponseDTO | null> {
@@ -172,7 +172,7 @@ export class SorteioRepository {
             query = query.eq('telefone', telefone);
         }
         
-        const { data, error } = query.limit(1);
+        const { data, error } = await query;
         
         if (error) return false;
         return data && data.length > 0;
