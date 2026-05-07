@@ -7,7 +7,8 @@ const app_1 = __importDefault(require("./app"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const PORT = Number(process.env.PORT) || 3000;
-app_1.default.listen(PORT, () => {
+const HOST = process.env.HOST || "0.0.0.0";
+app_1.default.listen(PORT, HOST, () => {
     console.log("===========================================");
     console.log(`🚀 Servidor rodando na porta ${PORT}`);
     console.log(`🌐 Ambiente: ${process.env.NODE_ENV || 'development'}`);
