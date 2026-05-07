@@ -7,8 +7,19 @@ const AppError_1 = require("../utils/AppError");
 const http_status_codes_1 = require("http-status-codes");
 class EncarteService {
     constructor() {
+        this.supabase = null;
         this.STORAGE_BUCKET = 'encartes';
-        this.supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+    }
+    getSupabase() {
+        const url = process.env.SUPABASE_URL;
+        const key = process.env.SUPABASE_ANON_KEY;
+        if (!url || !key) {
+            throw new AppError_1.AppError('Supabase não configurado', http_status_codes_1.StatusCodes.SERVICE_UNAVAILABLE);
+        }
+        if (!this.supabase) {
+            this.supabase = (0, supabase_js_1.createClient)(url, key);
+        }
+        return this.supabase;
     }
     async criar(data, arquivo) {
         try {
@@ -336,7 +347,7 @@ class EncarteService {
         const tituloSanitizado = titulo.replace(/[^a-z0-9]/gi, '_').toLowerCase();
         const nomeArquivo = `${Date.now()}-${tituloSanitizado}`;
         const caminho = `${nomeArquivo}`;
-        const { error: uploadError } = await this.supabase.storage
+        const { error: uploadError } = await this.getSupabase().storage
             .from(this.STORAGE_BUCKET)
             .upload(caminho, arquivo.buffer, {
             contentType: arquivo.mimetype,
@@ -345,7 +356,7 @@ class EncarteService {
         if (uploadError) {
             throw new AppError_1.AppError(`Erro ao fazer upload: ${uploadError.message}`, http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
         }
-        const { data } = this.supabase.storage
+        const { data } = this.getSupabase().storage
             .from(this.STORAGE_BUCKET)
             .getPublicUrl(caminho);
         return data.publicUrl;
@@ -354,7 +365,7 @@ class EncarteService {
         try {
             const partes = imagemUrl.split('/');
             const nomeArquivo = partes[partes.length - 1];
-            await this.supabase.storage
+            await this.getSupabase().storage
                 .from(this.STORAGE_BUCKET)
                 .remove([nomeArquivo]);
         }

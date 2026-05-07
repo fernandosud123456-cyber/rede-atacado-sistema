@@ -5,14 +5,19 @@ import { AppError } from '../utils/AppError';
 import { StatusCodes } from 'http-status-codes';
 
 export class EncarteService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient | null = null;
   private readonly STORAGE_BUCKET = 'encartes';
 
-  constructor() {
-    this.supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
+  private getSupabase(): SupabaseClient {
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_ANON_KEY;
+    if (!url || !key) {
+      throw new AppError('Supabase não configurado', StatusCodes.SERVICE_UNAVAILABLE);
+    }
+    if (!this.supabase) {
+      this.supabase = createClient(url, key);
+    }
+    return this.supabase;
   }
 
   async criar(data: CreateEncarteDTO, arquivo?: Express.Multer.File): Promise<Encarte> {
@@ -460,7 +465,7 @@ export class EncarteService {
     const nomeArquivo = `${Date.now()}-${tituloSanitizado}`;
     const caminho = `${nomeArquivo}`;
 
-    const { error: uploadError } = await this.supabase.storage
+    const { error: uploadError } = await this.getSupabase().storage
       .from(this.STORAGE_BUCKET)
       .upload(caminho, arquivo.buffer, {
         contentType: arquivo.mimetype,
@@ -474,7 +479,7 @@ export class EncarteService {
       );
     }
 
-    const { data } = this.supabase.storage
+    const { data } = this.getSupabase().storage
       .from(this.STORAGE_BUCKET)
       .getPublicUrl(caminho);
 
@@ -486,7 +491,7 @@ export class EncarteService {
       const partes = imagemUrl.split('/');
       const nomeArquivo = partes[partes.length - 1];
 
-      await this.supabase.storage
+      await this.getSupabase().storage
         .from(this.STORAGE_BUCKET)
         .remove([nomeArquivo]);
     } catch (error) {

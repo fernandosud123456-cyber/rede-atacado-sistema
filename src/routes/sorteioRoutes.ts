@@ -7,10 +7,9 @@ import multer from "multer";
 const router = Router();
 const service = new SorteioService();
 
-const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!
-);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
 
 const STORAGE_BUCKET = 'sorteios';
 const storage = multer.memoryStorage();

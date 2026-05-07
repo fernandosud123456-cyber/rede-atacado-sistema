@@ -1,15 +1,18 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
-
-export const supabase: SupabaseClient | null = (supabaseUrl && supabaseKey) 
-    ? createClient(supabaseUrl, supabaseKey) 
-    : null;
+function createClientOptional() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
 
 export function getSupabase(): SupabaseClient {
-    if (!supabase) {
-        throw new Error('Supabase não configurado. Configure SUPABASE_URL e SUPABASE_ANON_KEY.');
-    }
-    return supabase;
+  const client = createClientOptional();
+  if (!client) {
+    throw new Error('SUPABASE_URL e SUPABASE_ANON_KEY devem estar configuradas');
+  }
+  return client;
 }
+
+export const supabase = createClientOptional();
