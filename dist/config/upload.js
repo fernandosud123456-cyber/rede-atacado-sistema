@@ -23,4 +23,3 @@ exports.upload = (0, multer_1.default)({
         fileSize: 5 * 1024 * 1024 // 5MB
     }
 });
-//# sourceMappingURL=upload.js.map

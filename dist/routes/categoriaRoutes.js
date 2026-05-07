@@ -146,4 +146,3 @@ router.get("/buscar/:id", authMiddleware_1.authMiddleware, async (req, res) => {
     }
 });
 exports.default = router;
-//# sourceMappingURL=categoriaRoutes.js.map

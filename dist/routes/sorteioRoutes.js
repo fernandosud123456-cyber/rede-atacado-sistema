@@ -225,4 +225,3 @@ router.post("/:id/sortear", authMiddleware_1.authMiddleware, async (req, res) =>
     }
 });
 exports.default = router;
-//# sourceMappingURL=sorteioRoutes.js.map

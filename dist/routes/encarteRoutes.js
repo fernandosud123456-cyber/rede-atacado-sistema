@@ -186,4 +186,3 @@ router.post("/alterar-status/:id", authMiddleware_1.authMiddleware, async (req, 
     }
 });
 exports.default = router;
-//# sourceMappingURL=encarteRoutes.js.map

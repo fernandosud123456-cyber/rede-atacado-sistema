@@ -60,4 +60,3 @@ router.put("/atualizar/:id", authMiddleware_1.authMiddleware, async (req, res) =
     }
 });
 exports.default = router;
-//# sourceMappingURL=empresaRoutes.js.map

@@ -1,4 +1,4 @@
-import { pool } from "../config/database";
+import { dbPool as pool } from "../config/database" ;
 import { Encarte } from "../entity/Encarte";
 import { CreateEncarteDTO, UpdateEncarteDTO, EncarteResponseDTO, EncarteAtivoDTO } from "../entity/EncarteDTO";
 

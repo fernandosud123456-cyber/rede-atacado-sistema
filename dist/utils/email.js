@@ -8,11 +8,15 @@ exports.enviarEmailRecuperacao = enviarEmailRecuperacao;
 const resend_1 = require("resend");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const resend = new resend_1.Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new resend_1.Resend(process.env.RESEND_API_KEY) : null;
 exports.resend = resend;
 const EMAIL_FROM = process.env.EMAIL_FROM || "Certo Atacado <onboarding@resend.dev>";
 exports.EMAIL_FROM = EMAIL_FROM;
 async function enviarEmailRecuperacao(destinatario, token) {
+    if (!resend) {
+        console.warn("⚠️ RESEND_API_KEY não configurada. Email não será enviado.");
+        return;
+    }
     const resetLink = `${process.env.FRONTEND_URL || "http://localhost:3000"}/resetar-senha.html?token=${token}`;
     const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
@@ -35,4 +39,3 @@ async function enviarEmailRecuperacao(destinatario, token) {
         throw new Error(`Erro ao enviar email: ${error.message}`);
     }
 }
-//# sourceMappingURL=email.js.map

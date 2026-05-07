@@ -54,4 +54,3 @@ class CategoriaService {
     }
 }
 exports.CategoriaService = CategoriaService;
-//# sourceMappingURL=CategoriaService.js.map

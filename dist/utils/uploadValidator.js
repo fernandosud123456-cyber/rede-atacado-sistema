@@ -35,4 +35,3 @@ async function validateAndOptimizeImage(buffer) {
         mime: "image/webp"
     };
 }
-//# sourceMappingURL=uploadValidator.js.map

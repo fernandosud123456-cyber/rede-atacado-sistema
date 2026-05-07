@@ -6,12 +6,12 @@ class EmpresaRepository {
     // Buscar dados da empresa (primeiro registro), cria registro padrão se não existir
     async buscarDados() {
         try {
-            const result = await database_1.pool.query("SELECT * FROM empresa LIMIT 1");
+            const result = await database_1.dbPool.query("SELECT * FROM empresa LIMIT 1");
             if (result.rows[0]) {
                 return result.rows[0];
             }
             // Auto-criar registro padrão se a tabela estiver vazia
-            const insert = await database_1.pool.query(`INSERT INTO empresa (nome, endereco, telefone, instagram, facebook, whatsapp)
+            const insert = await database_1.dbPool.query(`INSERT INTO empresa (nome, endereco, telefone, instagram, facebook, whatsapp)
                  VALUES ($1, $2, $3, $4, $5, $6)
                  RETURNING *`, [
                 'Certo Atacado',
@@ -68,7 +68,7 @@ class EmpresaRepository {
                 WHERE id = $${paramCount} 
                 RETURNING *
             `;
-            const result = await database_1.pool.query(query, values);
+            const result = await database_1.dbPool.query(query, values);
             return result.rows[0] || null;
         }
         catch (error) {
@@ -78,4 +78,3 @@ class EmpresaRepository {
     }
 }
 exports.EmpresaRepository = EmpresaRepository;
-//# sourceMappingURL=EmpresaRepository.js.map

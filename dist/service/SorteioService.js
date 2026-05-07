@@ -130,4 +130,3 @@ class SorteioService {
     }
 }
 exports.SorteioService = SorteioService;
-//# sourceMappingURL=SorteioService.js.map

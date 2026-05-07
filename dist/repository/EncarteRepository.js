@@ -9,7 +9,7 @@ class EncarteRepository {
     // ✅ CORREÇÃO: JOIN com categorias para retornar nome, cor e ícone
     async listarAtivos() {
         try {
-            const result = await database_1.pool.query(`SELECT 
+            const result = await database_1.dbPool.query(`SELECT 
                     e.id, 
                     e.titulo, 
                     e.imagem_url, 
@@ -36,7 +36,7 @@ class EncarteRepository {
     }
     async buscarPorId(id) {
         try {
-            const result = await database_1.pool.query(`SELECT 
+            const result = await database_1.dbPool.query(`SELECT 
                     e.*,
                     c.nome as categoria_nome,
                     c.cor as categoria_cor,
@@ -53,7 +53,7 @@ class EncarteRepository {
     }
     // Listar TODOS os encartes (para o admin) - também com JOIN
     async listarTodos() {
-        const result = await database_1.pool.query(`SELECT 
+        const result = await database_1.dbPool.query(`SELECT 
                 e.*, 
                 c.nome as categoria_nome,
                 c.cor as categoria_cor,
@@ -67,7 +67,7 @@ class EncarteRepository {
     // CRIAÇÃO
     // ==========================================
     async criar(encarte) {
-        const result = await database_1.pool.query(`INSERT INTO encartes 
+        const result = await database_1.dbPool.query(`INSERT INTO encartes 
             (titulo, imagem_url, imagens, data_inicio, data_fim, ativo, categoria_id)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *`, [
@@ -126,7 +126,7 @@ class EncarteRepository {
             WHERE id = $${paramCount} 
             RETURNING *
         `;
-        const result = await database_1.pool.query(query, values);
+        const result = await database_1.dbPool.query(query, values);
         return result.rows[0] || null;
     }
     // ==========================================
@@ -134,7 +134,7 @@ class EncarteRepository {
     // ==========================================
     async excluir(id) {
         try {
-            const result = await database_1.pool.query("DELETE FROM encartes WHERE id = $1", [id]);
+            const result = await database_1.dbPool.query("DELETE FROM encartes WHERE id = $1", [id]);
             return result.rowCount !== null && result.rowCount > 0;
         }
         catch (error) {
@@ -147,7 +147,7 @@ class EncarteRepository {
     // ==========================================
     async desativarExpirados() {
         try {
-            const result = await database_1.pool.query(`UPDATE encartes 
+            const result = await database_1.dbPool.query(`UPDATE encartes 
                  SET ativo = false 
                  WHERE data_fim < NOW() AND ativo = true`);
             return result.rowCount || 0;
@@ -158,7 +158,7 @@ class EncarteRepository {
         }
     }
     async buscarPorCategoria(categoriaId) {
-        const result = await database_1.pool.query(`SELECT 
+        const result = await database_1.dbPool.query(`SELECT 
                 e.*, 
                 c.nome as categoria_nome,
                 c.cor as categoria_cor,
@@ -171,7 +171,7 @@ class EncarteRepository {
     }
     async listarFuturos() {
         try {
-            const result = await database_1.pool.query(`SELECT 
+            const result = await database_1.dbPool.query(`SELECT 
                     e.id, 
                     e.titulo, 
                     e.imagem_url, 
@@ -196,4 +196,3 @@ class EncarteRepository {
     }
 }
 exports.EncarteRepository = EncarteRepository;
-//# sourceMappingURL=EncarteRepository.js.map

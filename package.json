@@ -2,7 +2,7 @@
   "name": "rede-atacado-sistema",
   "version": "1.0.0",
   "description": "Sistema de gestão de encartes para atacado",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",

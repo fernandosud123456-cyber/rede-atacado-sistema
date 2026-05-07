@@ -7,8 +7,17 @@ const AppError_1 = require("../utils/AppError");
 const http_status_codes_1 = require("http-status-codes");
 class EncarteService {
     constructor() {
+        this.supabase = null;
         this.STORAGE_BUCKET = 'encartes';
-        this.supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+    }
+    getSupabase() {
+        if (!this.supabase && process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+            this.supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+        }
+        if (!this.supabase) {
+            throw new AppError_1.AppError('Banco de dados não configurado', http_status_codes_1.StatusCodes.SERVICE_UNAVAILABLE);
+        }
+        return this.supabase;
     }
     async criar(data, arquivo) {
         try {
@@ -16,7 +25,7 @@ class EncarteService {
             if (arquivo) {
                 imagem_url = await this.uploadImagem(arquivo, data.titulo);
             }
-            const { data: encarte, error } = await this.supabase
+            const { data: encarte, error } = await this.getSupabase()
                 .from('encartes')
                 .insert({
                 titulo: data.titulo,
@@ -336,7 +345,7 @@ class EncarteService {
         const tituloSanitizado = titulo.replace(/[^a-z0-9]/gi, '_').toLowerCase();
         const nomeArquivo = `${Date.now()}-${tituloSanitizado}`;
         const caminho = `${nomeArquivo}`;
-        const { error: uploadError } = await this.supabase.storage
+        const { error: uploadError } = await this.getSupabase().storage
             .from(this.STORAGE_BUCKET)
             .upload(caminho, arquivo.buffer, {
             contentType: arquivo.mimetype,
@@ -345,7 +354,7 @@ class EncarteService {
         if (uploadError) {
             throw new AppError_1.AppError(`Erro ao fazer upload: ${uploadError.message}`, http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
         }
-        const { data } = this.supabase.storage
+        const { data } = this.getSupabase().storage
             .from(this.STORAGE_BUCKET)
             .getPublicUrl(caminho);
         return data.publicUrl;
@@ -354,7 +363,7 @@ class EncarteService {
         try {
             const partes = imagemUrl.split('/');
             const nomeArquivo = partes[partes.length - 1];
-            await this.supabase.storage
+            await this.getSupabase().storage
                 .from(this.STORAGE_BUCKET)
                 .remove([nomeArquivo]);
         }

@@ -91,4 +91,3 @@ router.post("/trabalhe-conosco", upload.single("curriculo"), async (req, res) =>
     }
 });
 exports.default = router;
-//# sourceMappingURL=contatoRoutes.js.map

@@ -15,4 +15,3 @@ exports.logger = {
         console.debug(`[DEBUG] ${message}`, ...args);
     }
 };
-//# sourceMappingURL=logger.js.map

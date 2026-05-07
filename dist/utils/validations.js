@@ -64,4 +64,3 @@ exports.updateSorteioSchema = zod_1.z.object({
     data_fim: zod_1.z.string().transform((str) => new Date(str)).optional(),
     ativo: zod_1.z.boolean().optional(),
 });
-//# sourceMappingURL=validations.js.map

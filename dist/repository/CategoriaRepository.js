@@ -97,4 +97,3 @@ class CategoriaRepository {
     }
 }
 exports.CategoriaRepository = CategoriaRepository;
-//# sourceMappingURL=CategoriaRepository.js.map

@@ -133,4 +133,3 @@ router.delete("/excluir/:id", authMiddleware_1.authMiddleware, async (req, res) 
     }
 });
 exports.default = router;
-//# sourceMappingURL=adminRoutes.js.map

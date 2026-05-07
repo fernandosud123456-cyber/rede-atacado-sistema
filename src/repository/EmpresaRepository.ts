@@ -1,4 +1,4 @@
-import { pool } from "../config/database";
+import { dbPool as pool } from "../config/database" ;
 import { Empresa, EmpresaResponseDTO } from "../entity/EmpresaDTO";
 
 export class EmpresaRepository {
